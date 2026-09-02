@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/SupportDesk/">
+    <Project Path="SupportDesk.API/SupportDesk.API.csproj" />
+    <Project Path="SupportDesk.Application/SupportDesk.Application.csproj" />
+    <Project Path="SupportDesk.Core/SupportDesk.Core.csproj" />
+    <Project Path="SupportDesk.Infrastructure/SupportDesk.Infrastructure.csproj" />
+  </Folder>
+</Solution>
