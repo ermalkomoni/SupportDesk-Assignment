@@ -154,7 +154,7 @@ export class TicketListComponent {
   private toTicketQuery(params: Params): TicketQuery {
     return {
       pageNumber: this.positiveInteger(params['page'], 1),
-      pageSize: 20,
+      pageSize: 10,
       search: this.nonEmptyString(params['search']),
       status: this.enumValue(params['status'], [
         TicketStatus.New,

@@ -3,7 +3,7 @@
 public class PaginationParams
 {
 	private const int MaxPageSize = 100;
-	private const int DefaultPageSize = 20;
+	private const int DefaultPageSize = 10;
 	private const int DefaultPageNumber = 1;
 
 	private int _pageSize = DefaultPageSize;
