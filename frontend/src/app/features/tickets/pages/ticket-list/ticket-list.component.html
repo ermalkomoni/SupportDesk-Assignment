@@ -1,0 +1,143 @@
+<div class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold tracking-tight">Tickets</h1>
+      <p class="mt-1 text-sm text-neutral-400">Manage and track customer support requests.</p>
+    </div>
+    <a
+      routerLink="/tickets/new"
+      class="inline-flex items-center justify-center rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-400"
+    >
+      Create ticket
+    </a>
+  </div>
+
+  <label class="block">
+    <span class="sr-only">Search tickets</span>
+    <input
+      type="search"
+      [formControl]="search"
+      placeholder="Search by reference, title, customer, or email"
+      class="w-full rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-neutral-100 outline-none placeholder:text-neutral-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+    />
+  </label>
+
+  @if (query$ | async; as query) {
+    <sd-ticket-filters
+      [status]="query.status ?? null"
+      [priority]="query.priority ?? null"
+      [assignedAgentId]="query.assignedAgentId ?? null"
+      [overdueOnly]="query.overdueOnly ?? false"
+      (statusChange)="changeStatus($event)"
+      (priorityChange)="changePriority($event)"
+      (assignedAgentIdChange)="changeAgent($event)"
+      (overdueOnlyChange)="changeOverdue($event)"
+      (clearFilters)="clearFilters()"
+    />
+  }
+
+  @if (error$ | async; as error) {
+    <div class="rounded-xl border border-red-900/70 bg-red-950/40 p-4 text-sm text-red-200" role="alert">
+      {{ error }}
+    </div>
+  }
+
+  <div class="overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-neutral-800 text-left text-sm">
+        <thead class="bg-neutral-900/80 text-xs uppercase tracking-wide text-neutral-400">
+          <tr>
+            <th class="px-4 py-3 font-medium">Reference</th>
+            <th class="px-4 py-3 font-medium">Title</th>
+            <th class="px-4 py-3 font-medium">Customer</th>
+            <th class="px-4 py-3 font-medium">Priority</th>
+            <th class="px-4 py-3 font-medium">Status</th>
+            <th class="px-4 py-3 font-medium">Assigned agent</th>
+            <th class="px-4 py-3 font-medium">Due date</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-neutral-800">
+          @if (loading$ | async) {
+            @for (row of skeletonRows; track $index) {
+              <tr class="animate-pulse">
+                @for (cell of [1, 2, 3, 4, 5, 6, 7]; track cell) {
+                  <td class="px-4 py-4">
+                    <div class="h-4 rounded bg-neutral-800" [class.w-20]="cell !== 2" [class.w-40]="cell === 2"></div>
+                  </td>
+                }
+              </tr>
+            }
+          } @else if (result$ | async; as result) {
+            @for (ticket of result.items; track ticket.id) {
+              <tr
+                tabindex="0"
+                class="cursor-pointer bg-neutral-900 transition-colors hover:bg-neutral-800/70 focus:bg-neutral-800/70 focus:outline-none"
+                (click)="openTicket(ticket.id)"
+                (keydown.enter)="openTicket(ticket.id)"
+              >
+                <td
+                  class="whitespace-nowrap px-4 py-4 font-mono text-xs font-medium text-sky-300"
+                  [class.border-l-4]="ticket.isOverdue"
+                  [class.border-red-500]="ticket.isOverdue"
+                >
+                  {{ ticket.reference }}
+                </td>
+                <td class="min-w-56 px-4 py-4 font-medium text-neutral-100">
+                  <div class="flex items-center gap-2">
+                    <span>{{ ticket.title }}</span>
+                    @if (ticket.isOverdue) {
+                      <span class="rounded-full bg-red-400/10 px-2 py-0.5 text-xs font-medium text-red-300 ring-1 ring-inset ring-red-400/20">
+                        Overdue
+                      </span>
+                    }
+                  </div>
+                </td>
+                <td class="whitespace-nowrap px-4 py-4 text-neutral-300">{{ ticket.customerName }}</td>
+                <td class="whitespace-nowrap px-4 py-4">
+                  <sd-ticket-priority-badge [priority]="ticket.priority" />
+                </td>
+                <td class="whitespace-nowrap px-4 py-4">
+                  <sd-ticket-status-badge [status]="ticket.status" />
+                </td>
+                <td class="whitespace-nowrap px-4 py-4 text-neutral-300">
+                  @if (ticket.assignedAgentName) {
+                    {{ ticket.assignedAgentName }}
+                  } @else {
+                    <span class="text-neutral-500">Unassigned</span>
+                  }
+                </td>
+                <td class="whitespace-nowrap px-4 py-4 text-neutral-300">
+                  {{ ticket.dueDate | date: 'mediumDate' }}
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="px-6 py-16 text-center">
+                  <p class="text-base font-medium text-neutral-200">No tickets found</p>
+                  <p class="mt-1 text-sm text-neutral-500">Try changing the filters or create a new ticket.</p>
+                  <a routerLink="/tickets/new" class="mt-4 inline-flex text-sm font-semibold text-sky-400 hover:text-sky-300">
+                    Create ticket
+                  </a>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (result$ | async; as result) {
+      @if (result.totalCount > 0) {
+        <div class="border-t border-neutral-800 px-4 py-4">
+          <sd-pagination
+            [page]="result.pageNumber"
+            [pageSize]="result.pageSize"
+            [totalPages]="result.totalPages"
+            [totalCount]="result.totalCount"
+            (pageChange)="changePage($event)"
+          />
+        </div>
+      }
+    }
+  </div>
+</div>
