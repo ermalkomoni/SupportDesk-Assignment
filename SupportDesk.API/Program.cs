@@ -1,5 +1,6 @@
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using SupportDesk.API.Middleware;
 using SupportDesk.Application;
 using SupportDesk.Infrastructure;
@@ -10,7 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
-builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("Frontend", policy =>
+		policy
+			.WithOrigins("http://localhost:4200", "https://localhost:4200")
+			.AllowAnyHeader()
+			.AllowAnyMethod());
+});
+
+builder.Services.AddControllers()
+	.AddJsonOptions(options =>
+		options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddApiVersioning(options =>
 	{
@@ -39,8 +51,12 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
+else
+{
+	app.UseHttpsRedirection();
+}
 
-app.UseHttpsRedirection();
+app.UseCors("Frontend");
 
 app.UseAuthorization();
 

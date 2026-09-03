@@ -182,12 +182,13 @@ export class TicketListComponent {
     return typeof value === 'string' && value.trim() ? value.trim() : undefined;
   }
 
-  private enumValue<T extends number>(
+  private enumValue<T extends string>(
     value: unknown,
     allowed: readonly T[],
   ): T | undefined {
-    const parsed = Number(value);
-    return allowed.includes(parsed as T) ? parsed as T : undefined;
+    return typeof value === 'string' && allowed.includes(value as T)
+      ? value as T
+      : undefined;
   }
 
   private errorMessage(error: unknown): string {

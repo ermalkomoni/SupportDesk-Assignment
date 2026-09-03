@@ -13,14 +13,6 @@ namespace SupportDesk.Application.Handlers.Commands;
 
 public class ChangeTicketStatusCommandHandler : IRequestHandler<ChangeTicketStatusCommand, TicketDetailDto>
 {
-	private static readonly Dictionary<TicketStatus, TicketStatus[]> AllowedTransitions = new()
-	{
-		[TicketStatus.New] = new[] { TicketStatus.InProgress },
-		[TicketStatus.InProgress] = new[] { TicketStatus.Resolved },
-		[TicketStatus.Resolved] = new[] { TicketStatus.Closed, TicketStatus.InProgress },
-		[TicketStatus.Closed] = Array.Empty<TicketStatus>(),
-	};
-
 	private readonly ITicketRepository _ticketRepository;
 	private readonly IMapper _mapper;
 
@@ -37,11 +29,17 @@ public class ChangeTicketStatusCommandHandler : IRequestHandler<ChangeTicketStat
 
 		var newStatus = request.Status.NewStatus;
 
-		if (!AllowedTransitions.TryGetValue(ticket.Status, out var allowed) || !allowed.Contains(newStatus))
-			throw new InvalidStatusTransitionException(ticket.Status, newStatus);
+		if (!ticket.AllowedTransitions.Contains(newStatus))
+		{
+			if (newStatus == TicketStatus.InProgress &&
+				ticket.Status is TicketStatus.New or TicketStatus.Resolved &&
+				ticket.AssignedAgent is not { IsActive: true })
+			{
+				throw new BusinessRuleException(TicketErrors.InProgressRequiresActiveAgent);
+			}
 
-		if (newStatus == TicketStatus.InProgress && ticket.AssignedAgent is not { IsActive: true })
-			throw new BusinessRuleException(TicketErrors.InProgressRequiresActiveAgent);
+			throw new InvalidStatusTransitionException(ticket.Status, newStatus);
+		}
 
 		var wasResolved = ticket.Status == TicketStatus.Resolved;
 		var now = DateTime.UtcNow;

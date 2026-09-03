@@ -1,7 +1,7 @@
 export enum Department {
-  Technical = 0,
-  Billing = 1,
-  General = 2,
+  Technical = 'Technical',
+  Billing = 'Billing',
+  General = 'General',
 }
 
 export interface Agent {

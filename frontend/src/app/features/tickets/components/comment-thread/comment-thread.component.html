@@ -1,0 +1,59 @@
+<section class="rounded-xl border border-neutral-800 bg-neutral-900 p-6">
+  <h2 class="text-lg font-semibold text-neutral-100">Comments</h2>
+
+  <div class="mt-5 space-y-4">
+    @for (comment of comments; track comment.id) {
+      <article class="rounded-lg border border-neutral-800 bg-neutral-950/50 p-4">
+        <div class="flex flex-wrap items-baseline justify-between gap-2">
+          <h3 class="text-sm font-semibold text-neutral-200">{{ comment.authorName }}</h3>
+          <time class="text-xs text-neutral-500" [attr.datetime]="comment.createdDate">
+            {{ relativeCreatedDate(comment.createdDate) }}
+          </time>
+        </div>
+        <p class="mt-2 whitespace-pre-wrap text-sm leading-6 text-neutral-300">{{ comment.body }}</p>
+      </article>
+    } @empty {
+      <p class="rounded-lg border border-dashed border-neutral-800 px-4 py-8 text-center text-sm text-neutral-500">
+        No comments yet.
+      </p>
+    }
+  </div>
+
+  @if (!readOnly) {
+  <form class="mt-6 space-y-4 border-t border-neutral-800 pt-6" (submit)="submit()">
+    <label class="grid gap-1.5 text-sm text-neutral-300">
+      Your name
+      <input
+        type="text"
+        [formControl]="authorName"
+        [disabled]="submitting"
+        class="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-neutral-100 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+      />
+      @if (authorName.touched && authorName.hasError('required')) {
+        <span class="text-xs text-red-300">Your name is required.</span>
+      }
+    </label>
+
+    <label class="grid gap-1.5 text-sm text-neutral-300">
+      Add a comment
+      <textarea
+        rows="4"
+        [formControl]="body"
+        [disabled]="submitting"
+        class="resize-y rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-neutral-100 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+      ></textarea>
+      @if (body.touched && body.hasError('required')) {
+        <span class="text-xs text-red-300">A comment is required.</span>
+      }
+    </label>
+
+    <button
+      type="submit"
+      class="rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="submitting"
+    >
+      {{ submitting ? 'Adding…' : 'Add comment' }}
+    </button>
+  </form>
+  }
+</section>

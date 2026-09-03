@@ -54,11 +54,11 @@ export class TicketFiltersComponent {
   ];
 
   protected onStatusChange(value: string): void {
-    this.statusChange.emit(value === '' ? null : Number(value) as TicketStatus);
+    this.statusChange.emit(value === '' ? null : value as TicketStatus);
   }
 
   protected onPriorityChange(value: string): void {
-    this.priorityChange.emit(value === '' ? null : Number(value) as TicketPriority);
+    this.priorityChange.emit(value === '' ? null : value as TicketPriority);
   }
 
   protected onAgentChange(value: string): void {
