@@ -10,4 +10,14 @@
     <ProjectReference Include="..\SupportDesk.Core\SupportDesk.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\Tickets\" />
+    <Folder Include="Queries\Tickets\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.2.0" />
+    <PackageReference Include="MediatR" Version="14.2.0" />
+  </ItemGroup>
+
 </Project>
