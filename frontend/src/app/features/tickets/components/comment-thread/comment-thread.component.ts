@@ -20,6 +20,7 @@ import { TicketComment } from '../../models/ticket.model';
 export class CommentThreadComponent {
   @Input({ required: true }) comments: TicketComment[] = [];
   @Input() submitting = false;
+  @Input() readOnly = false;
   @Output() readonly addComment = new EventEmitter<AddCommentRequest>();
 
   protected readonly authorName = new FormControl('', {

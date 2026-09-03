@@ -2,6 +2,8 @@
   &larr; Back to tickets
 </a>
 
+@let ticket = ticket$ | async;
+
 @if (loading()) {
   <div class="mt-6 animate-pulse space-y-6">
     <div class="h-8 w-2/3 rounded bg-neutral-800"></div>
@@ -14,7 +16,7 @@
   <div class="mt-6 rounded-xl border border-red-900/70 bg-red-950/40 p-4 text-sm text-red-200" role="alert">
     {{ error }}
   </div>
-} @else if (ticket$ | async; as ticket) {
+} @else if (ticket) {
   <header class="mt-6 flex flex-col gap-4 border-b border-neutral-800 pb-6">
     <div class="flex flex-wrap items-center gap-2">
       <span class="font-mono text-sm font-medium text-sky-300">{{ ticket.reference }}</span>
@@ -29,6 +31,12 @@
     <h1 class="text-3xl font-semibold tracking-tight text-neutral-100">{{ ticket.title }}</h1>
   </header>
 
+  @if (ticket.status === ticketStatus.Closed) {
+    <div class="mt-6 rounded-xl border border-neutral-800 bg-neutral-900 px-4 py-3 text-sm text-neutral-400">
+      This ticket is closed and read-only.
+    </div>
+  }
+
   <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
     <main class="space-y-6">
       <section class="rounded-xl border border-neutral-800 bg-neutral-900 p-6">
@@ -39,6 +47,7 @@
       <sd-comment-thread
         [comments]="ticket.comments"
         [submitting]="actionPending()"
+        [readOnly]="ticket.status === ticketStatus.Closed"
         (addComment)="addComment(ticket.id, $event)"
       />
     </main>
@@ -98,7 +107,7 @@
                   <button
                     type="button"
                     class="rounded-lg bg-sky-500 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-50"
-                    [disabled]="actionPending()"
+                    [disabled]="actionPending() || ticket.status === ticketStatus.Closed"
                     (click)="changeStatus(ticket.id, transition)"
                   >
                     {{ statusLabel(transition) }}
@@ -117,7 +126,7 @@
               id="agent"
               class="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 disabled:cursor-not-allowed disabled:opacity-50"
               [value]="ticket.assignedAgentId ?? ''"
-              [disabled]="actionPending()"
+              [disabled]="actionPending() || ticket.status === ticketStatus.Closed"
               (change)="assignAgent(ticket.id, agentSelect.value)"
             >
               <option value="">Select an active agent</option>
@@ -130,7 +139,7 @@
           <button
             type="button"
             class="w-full rounded-lg border border-neutral-700 px-3 py-2 text-sm font-medium text-neutral-200 transition-colors hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
-            [disabled]="actionPending() || !ticket.assignedAgentId"
+            [disabled]="actionPending() || !ticket.assignedAgentId || ticket.status === ticketStatus.Closed"
             (click)="unassignAgent(ticket.id)"
           >
             Unassign

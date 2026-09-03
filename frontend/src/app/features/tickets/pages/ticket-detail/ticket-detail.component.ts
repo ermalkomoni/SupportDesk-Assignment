@@ -57,6 +57,7 @@ export class TicketDetailComponent {
   protected readonly loadError = signal<string | null>(null);
   protected readonly mutationError = signal<string | null>(null);
   protected readonly actionPending = signal(false);
+  protected readonly ticketStatus = TicketStatus;
 
   protected readonly activeAgents$ = this.agentService.list().pipe(
     map((agents) => agents.filter((agent) => agent.isActive)),
