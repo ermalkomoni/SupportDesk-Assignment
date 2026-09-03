@@ -12,8 +12,6 @@
 
   <ItemGroup>
     <Folder Include="Commands\Tickets\" />
-    <Folder Include="Handlers\Queries\" />
-    <Folder Include="Queries\Agents\" />
     <Folder Include="Queries\Tickets\" />
   </ItemGroup>
 
