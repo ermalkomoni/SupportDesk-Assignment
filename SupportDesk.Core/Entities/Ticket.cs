@@ -21,5 +21,8 @@ public class Ticket : BaseEntity
 	public DateTime? ClosedDate { get; set; }
 	public DateTime DueDate { get; set; }
 
+	public bool IsOverdue =>
+	Status is not (TicketStatus.Resolved or TicketStatus.Closed) && DateTime.UtcNow > DueDate;
+
 	public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }
