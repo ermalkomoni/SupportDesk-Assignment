@@ -24,5 +24,17 @@ public class Ticket : BaseEntity
 	public bool IsOverdue =>
 	Status is not (TicketStatus.Resolved or TicketStatus.Closed) && DateTime.UtcNow > DueDate;
 
+	public IReadOnlyList<TicketStatus> AllowedTransitions => Status switch
+	{
+		TicketStatus.New when AssignedAgent is { IsActive: true } => [TicketStatus.InProgress],
+		TicketStatus.New => [],
+		TicketStatus.InProgress => [TicketStatus.Resolved],
+		TicketStatus.Resolved when AssignedAgent is { IsActive: true } =>
+			[TicketStatus.Closed, TicketStatus.InProgress],
+		TicketStatus.Resolved => [TicketStatus.Closed],
+		TicketStatus.Closed => [],
+		_ => [],
+	};
+
 	public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }

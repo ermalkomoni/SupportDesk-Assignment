@@ -53,6 +53,7 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 			   .IsRequired();
 
 		builder.Ignore(t => t.IsOverdue);
+		builder.Ignore(t => t.AllowedTransitions);
 
 		builder.HasIndex(t => t.Status);
 		builder.HasIndex(t => t.Priority);

@@ -20,5 +20,6 @@ public record TicketDetailDto(
 	DateTime? ClosedDate,
 	DateTime DueDate,
 	bool IsOverdue,
+	IReadOnlyList<TicketStatus> AllowedTransitions,
 	IReadOnlyCollection<CommentDto> Comments
 );

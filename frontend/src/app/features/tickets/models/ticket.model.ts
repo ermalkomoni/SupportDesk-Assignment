@@ -21,6 +21,7 @@ export interface TicketDetail extends TicketListItem {
   lastModifiedDate: string;
   resolvedDate: string | null;
   closedDate: string | null;
+  allowedTransitions: TicketStatus[];
   comments: TicketComment[];
 }
 
