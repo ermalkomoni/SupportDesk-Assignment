@@ -19,7 +19,23 @@ import { TicketComment } from '../../models/ticket.model';
 })
 export class CommentThreadComponent {
   @Input({ required: true }) comments: TicketComment[] = [];
-  @Input() submitting = false;
+  @Input() set submitting(value: boolean) {
+    this.isSubmitting = value;
+    const controls = [this.authorName, this.body];
+
+    for (const control of controls) {
+      if (value) {
+        control.disable({ emitEvent: false });
+      } else {
+        control.enable({ emitEvent: false });
+      }
+    }
+  }
+
+  get submitting(): boolean {
+    return this.isSubmitting;
+  }
+
   @Input() readOnly = false;
   @Output() readonly addComment = new EventEmitter<AddCommentRequest>();
 
@@ -31,6 +47,8 @@ export class CommentThreadComponent {
     nonNullable: true,
     validators: [Validators.required],
   });
+
+  private isSubmitting = false;
 
   private readonly relativeTime = new Intl.RelativeTimeFormat(undefined, {
     numeric: 'auto',
