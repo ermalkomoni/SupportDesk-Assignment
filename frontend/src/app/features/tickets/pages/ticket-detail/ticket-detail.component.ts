@@ -23,6 +23,7 @@ import {
 
 import { ApiError } from '../../../../core/http/problem-details.model';
 import { AgentService } from '../../../agents/services/agent.service';
+import { CommentThreadComponent } from '../../components/comment-thread/comment-thread.component';
 import { TicketPriorityBadgeComponent } from '../../components/ticket-priority-badge/ticket-priority-badge.component';
 import { TicketStatusBadgeComponent } from '../../components/ticket-status-badge/ticket-status-badge.component';
 import { TicketStatus } from '../../models/ticket-status.enum';
@@ -33,6 +34,7 @@ import { TicketService } from '../../services/ticket.service';
   standalone: true,
   imports: [
     AsyncPipe,
+    CommentThreadComponent,
     DatePipe,
     RouterLink,
     TicketPriorityBadgeComponent,
@@ -90,6 +92,13 @@ export class TicketDetailComponent {
 
   protected unassignAgent(id: string): void {
     this.runMutation(this.ticketService.unassignAgent(id));
+  }
+
+  protected addComment(
+    id: string,
+    comment: { authorName: string; body: string },
+  ): void {
+    this.runMutation(this.ticketService.addComment(id, comment));
   }
 
   protected statusLabel(status: TicketStatus): string {

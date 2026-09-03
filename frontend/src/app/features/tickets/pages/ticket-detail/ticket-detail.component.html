@@ -35,6 +35,12 @@
         <h2 class="text-lg font-semibold text-neutral-100">Description</h2>
         <p class="mt-4 whitespace-pre-wrap text-sm leading-6 text-neutral-300">{{ ticket.description }}</p>
       </section>
+
+      <sd-comment-thread
+        [comments]="ticket.comments"
+        [submitting]="actionPending()"
+        (addComment)="addComment(ticket.id, $event)"
+      />
     </main>
 
     <aside class="space-y-6">
