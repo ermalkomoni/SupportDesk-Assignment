@@ -3,6 +3,6 @@
 public enum Department
 {
 	Technical,
-    Billing,
-    General
+	Billing,
+	General
 }
