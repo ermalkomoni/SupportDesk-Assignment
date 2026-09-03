@@ -1,0 +1,70 @@
+<section
+  aria-label="Ticket filters"
+  class="grid gap-4 rounded-xl border border-neutral-800 bg-neutral-900 p-4 sm:grid-cols-2 lg:grid-cols-5"
+>
+  <label class="grid gap-1.5 text-sm text-neutral-300">
+    Status
+    <select
+      #statusSelect
+      class="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-neutral-100 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+      [value]="status ?? ''"
+      (change)="onStatusChange(statusSelect.value)"
+    >
+      <option value="">All statuses</option>
+      @for (option of statuses; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="grid gap-1.5 text-sm text-neutral-300">
+    Priority
+    <select
+      #prioritySelect
+      class="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-neutral-100 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+      [value]="priority ?? ''"
+      (change)="onPriorityChange(prioritySelect.value)"
+    >
+      <option value="">All priorities</option>
+      @for (option of priorities; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="grid gap-1.5 text-sm text-neutral-300">
+    Agent
+    <select
+      #agentSelect
+      class="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-neutral-100 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+      [value]="assignedAgentId ?? ''"
+      (change)="onAgentChange(agentSelect.value)"
+    >
+      <option value="">All agents</option>
+      @for (agent of agents$ | async; track agent.id) {
+        <option [value]="agent.id">{{ agent.fullName }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="flex items-end gap-2 pb-2 text-sm text-neutral-300">
+    <input
+      #overdueCheckbox
+      type="checkbox"
+      class="h-4 w-4 rounded border-neutral-700 bg-neutral-950 text-sky-500 focus:ring-sky-500/30"
+      [checked]="overdueOnly"
+      (change)="overdueOnlyChange.emit(overdueCheckbox.checked)"
+    />
+    Overdue only
+  </label>
+
+  <div class="flex items-end">
+    <button
+      type="button"
+      class="w-full rounded-lg border border-neutral-700 px-3 py-2 text-sm font-medium text-neutral-200 transition-colors hover:border-neutral-600 hover:bg-neutral-800"
+      (click)="clearFilters.emit()"
+    >
+      Clear filters
+    </button>
+  </div>
+</section>
