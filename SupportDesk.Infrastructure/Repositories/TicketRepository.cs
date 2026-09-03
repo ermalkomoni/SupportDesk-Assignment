@@ -89,7 +89,8 @@ public class TicketRepository : ITicketRepository
 			query = query.Where(t =>
 				EF.Functions.ILike(t.Reference, term) ||
 				EF.Functions.ILike(t.Title, term) ||
-				EF.Functions.ILike(t.CustomerName, term));
+				EF.Functions.ILike(t.CustomerName, term) ||
+				EF.Functions.ILike(t.CustomerEmail, term));
 		}
 
 		if (parameters.Status is { } status)

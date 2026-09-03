@@ -6,7 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   BehaviorSubject,
   EMPTY,
@@ -22,6 +22,7 @@ import {
 } from 'rxjs';
 
 import { ApiError } from '../../../../core/http/problem-details.model';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AgentService } from '../../../agents/services/agent.service';
 import { CommentThreadComponent } from '../../components/comment-thread/comment-thread.component';
 import { TicketPriorityBadgeComponent } from '../../components/ticket-priority-badge/ticket-priority-badge.component';
@@ -35,6 +36,7 @@ import { TicketService } from '../../services/ticket.service';
   imports: [
     AsyncPipe,
     CommentThreadComponent,
+    ConfirmDialogComponent,
     DatePipe,
     RouterLink,
     TicketPriorityBadgeComponent,
@@ -46,6 +48,7 @@ import { TicketService } from '../../services/ticket.service';
 export class TicketDetailComponent {
   private readonly ticketService = inject(TicketService);
   private readonly agentService = inject(AgentService);
+  private readonly router = inject(Router);
   private readonly id$ = new ReplaySubject<string>(1);
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
@@ -57,6 +60,7 @@ export class TicketDetailComponent {
   protected readonly loadError = signal<string | null>(null);
   protected readonly mutationError = signal<string | null>(null);
   protected readonly actionPending = signal(false);
+  protected readonly deleteDialogOpen = signal(false);
   protected readonly ticketStatus = TicketStatus;
 
   protected readonly activeAgents$ = this.agentService.list().pipe(
@@ -100,6 +104,25 @@ export class TicketDetailComponent {
     comment: { authorName: string; body: string },
   ): void {
     this.runMutation(this.ticketService.addComment(id, comment));
+  }
+
+  protected deleteTicket(id: string): void {
+    this.deleteDialogOpen.set(false);
+    this.mutationError.set(null);
+    this.actionPending.set(true);
+
+    this.ticketService
+      .delete(id)
+      .pipe(finalize(() => this.actionPending.set(false)))
+      .subscribe({
+        next: () => {
+          void this.router.navigate(['/tickets']);
+        },
+        error: (error: unknown) =>
+          this.mutationError.set(
+            this.errorMessage(error, 'The ticket could not be deleted.'),
+          ),
+      });
   }
 
   protected statusLabel(status: TicketStatus): string {

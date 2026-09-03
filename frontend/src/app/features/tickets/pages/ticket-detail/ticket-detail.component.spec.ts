@@ -20,6 +20,7 @@ describe('TicketDetailComponent', () => {
       'assignAgent',
       'unassignAgent',
       'addComment',
+      'delete',
     ]);
     const agentService = jasmine.createSpyObj<AgentService>('AgentService', [
       'list',
@@ -59,10 +60,37 @@ describe('TicketDetailComponent', () => {
 
     const host = fixture.nativeElement as HTMLElement;
     const agentSelect = host.querySelector('#agent') as HTMLSelectElement;
+    const deleteButton = Array.from(host.querySelectorAll('button')).find(
+      (button) => button.textContent?.trim() === 'Delete ticket',
+    ) as HTMLButtonElement;
 
     expect(host.querySelectorAll('[data-testid="status-transition"]').length).toBe(0);
     expect(host.querySelector('sd-comment-thread form')).toBeNull();
     expect(agentSelect.disabled).toBeTrue();
+    expect(deleteButton.disabled).toBeTrue();
+  });
+
+  it('opens the delete confirmation dialog before deleting', async () => {
+    await renderTicket({ status: TicketStatus.New });
+
+    const host = fixture.nativeElement as HTMLElement;
+    const deleteButton = Array.from(host.querySelectorAll('button')).find(
+      (button) => button.textContent?.trim() === 'Delete ticket',
+    ) as HTMLButtonElement;
+
+    deleteButton.click();
+    fixture.detectChanges();
+
+    expect(host.querySelector('sd-confirm-dialog')).not.toBeNull();
+    expect(ticketService.delete).not.toHaveBeenCalled();
+
+    const cancelButton = Array.from(host.querySelectorAll('button')).find(
+      (button) => button.textContent?.trim() === 'Cancel',
+    ) as HTMLButtonElement;
+    cancelButton.click();
+    fixture.detectChanges();
+
+    expect(host.querySelector('sd-confirm-dialog')).toBeNull();
   });
 
   async function renderTicket(

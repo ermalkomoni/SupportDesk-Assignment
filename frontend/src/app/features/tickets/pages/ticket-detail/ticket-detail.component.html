@@ -145,8 +145,27 @@
           >
             Unassign
           </button>
+
+          <button
+            type="button"
+            class="w-full rounded-lg border border-red-900/70 px-3 py-2 text-sm font-medium text-red-200 transition-colors hover:bg-red-950/40 disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="actionPending() || ticket.status === ticketStatus.Closed"
+            (click)="deleteDialogOpen.set(true)"
+          >
+            Delete ticket
+          </button>
         </div>
       </section>
     </aside>
   </div>
+
+  @if (deleteDialogOpen()) {
+    <sd-confirm-dialog
+      title="Delete ticket"
+      [message]="'Delete ' + ticket.reference + '? This action cannot be undone.'"
+      confirmLabel="Delete ticket"
+      (confirm)="deleteTicket(ticket.id)"
+      (cancel)="deleteDialogOpen.set(false)"
+    />
+  }
 }
