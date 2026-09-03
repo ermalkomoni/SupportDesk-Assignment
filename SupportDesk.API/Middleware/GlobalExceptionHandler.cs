@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using SupportDesk.Application.Exceptions;
@@ -25,6 +26,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 	{
 		var (status, title) = exception switch
 		{
+			ValidationException => (StatusCodes.Status400BadRequest, "One or more validation errors occurred"),
 			NotFoundException => (StatusCodes.Status404NotFound, "Resource not found"),
 			BusinessRuleException => (StatusCodes.Status409Conflict, "Business rule violation"),
 			_ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred")
@@ -35,16 +37,25 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
 		httpContext.Response.StatusCode = status;
 
+		var problemDetails = new ProblemDetails
+		{
+			Status = status,
+			Title = title,
+			Detail = status == StatusCodes.Status500InternalServerError ? null : exception.Message
+		};
+
+		if (exception is ValidationException validationException)
+		{
+			problemDetails.Extensions["errors"] = validationException.Errors
+				.GroupBy(e => e.PropertyName)
+				.ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray());
+		}
+
 		return await _problemDetailsService.TryWriteAsync(new ProblemDetailsContext
 		{
 			HttpContext = httpContext,
 			Exception = exception,
-			ProblemDetails = new ProblemDetails
-			{
-				Status = status,
-				Title = title,
-				Detail = status == StatusCodes.Status500InternalServerError ? null : exception.Message
-			}
+			ProblemDetails = problemDetails
 		});
 	}
 }
