@@ -17,7 +17,7 @@ public class AgentConfiguration : IEntityTypeConfiguration<Agent>
 		builder.Property(a => a.Email)
 			   .IsRequired()
 			   .HasMaxLength(256);
-		
+
 		builder.HasIndex(a => a.Email)
 			   .IsUnique();
 
