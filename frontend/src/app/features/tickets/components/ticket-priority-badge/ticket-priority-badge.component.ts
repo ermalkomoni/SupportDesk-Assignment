@@ -7,10 +7,12 @@ import { TicketPriority } from '../../models/ticket-priority.enum';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <span
-      class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium"
-      [class]="priorityClasses[priority]"
-    >
+    <span class="inline-flex items-center gap-2 text-sm font-medium text-neutral-200">
+      <span
+        class="h-2 w-2 rounded-full"
+        [class]="priorityDotClasses[priority]"
+        aria-hidden="true"
+      ></span>
       {{ priorityLabels[priority] }}
     </span>
   `,
@@ -25,14 +27,10 @@ export class TicketPriorityBadgeComponent {
     [TicketPriority.Critical]: 'Critical',
   };
 
-  protected readonly priorityClasses: Record<TicketPriority, string> = {
-    [TicketPriority.Low]:
-      'bg-neutral-400/10 text-neutral-300 ring-1 ring-inset ring-neutral-400/20',
-    [TicketPriority.Normal]:
-      'bg-blue-400/10 text-blue-300 ring-1 ring-inset ring-blue-400/20',
-    [TicketPriority.High]:
-      'bg-orange-400/10 text-orange-300 ring-1 ring-inset ring-orange-400/20',
-    [TicketPriority.Critical]:
-      'bg-red-400/10 text-red-300 ring-1 ring-inset ring-red-400/20',
+  protected readonly priorityDotClasses: Record<TicketPriority, string> = {
+    [TicketPriority.Low]: 'bg-neutral-400',
+    [TicketPriority.Normal]: 'bg-sky-500',
+    [TicketPriority.High]: 'bg-amber-400',
+    [TicketPriority.Critical]: 'bg-red-400',
   };
 }
