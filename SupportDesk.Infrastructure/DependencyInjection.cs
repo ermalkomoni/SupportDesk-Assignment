@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SupportDesk.Application.Services;
 using SupportDesk.Core.Repositories;
 using SupportDesk.Infrastructure.Data;
 using SupportDesk.Infrastructure.Repositories;
+using SupportDesk.Infrastructure.Services;
 
 namespace SupportDesk.Infrastructure;
 
@@ -18,8 +20,8 @@ public static class DependencyInjection
 
 		services.AddScoped<IAgentRepository, AgentRepository>();
 		services.AddScoped<ITicketRepository, TicketRepository>();
+		services.AddScoped<IReferenceNumberGenerator, ReferenceNumberGenerator>();
 
 		return services;
 	}
 }
-
