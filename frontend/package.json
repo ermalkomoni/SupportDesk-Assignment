@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "node api.js && ng serve",
+    "build": "node api.js && ng build",
     "test": "ng test --watch=false --browsers=ChromeHeadless"
   },
   "dependencies": {
