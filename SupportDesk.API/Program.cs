@@ -59,6 +59,7 @@ else
 	app.UseHttpsRedirection();
 }
 
+app.UseRouting();
 app.UseCors("Frontend");
 
 app.UseAuthorization();
