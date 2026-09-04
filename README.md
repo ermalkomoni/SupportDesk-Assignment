@@ -1,5 +1,7 @@
 # SupportDesk
 
+# Live URL: https://pecb-assignment.netlify.app/
+
 ## Tech Stack
 
 Backend:
@@ -84,6 +86,17 @@ A dedicated status endpoint is used because changing a ticket status is a workfl
 
 - API Versioning and CancellationToken were also added intepreting how a real product is developed properly.
 
+## Deployment
+
+This project is deployed with:
+
+- **Frontend:** Netlify
+- **Backend:** Render Web Service
+- **Database:** Render PostgreSQL
+
 ## Time Spent
 
-Development `10-14 hours` (Backend consumed most of the time, if I would have choose with layered architecture for example, I would develop it a lot faster)
+- Development `10-14 hours`
+(Backend consumed most of the time, if I would have choose with layered architecture for example, I would develop it a lot faster)
+- Deployment `2 hours`
+
