@@ -1,3 +1,3 @@
 export const environment: { apiBaseUrl: string } = {
-  apiBaseUrl: 'https://localhost:7045/api/v1',
+  apiBaseUrl: 'https://supportdesk-assignment.onrender.com/api/v1',
 };
