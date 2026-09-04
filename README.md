@@ -26,7 +26,13 @@ Prerequisites:
 - .NET 10 SDK
 - PostgreSQL
 
-The backend uses **user secrets** for local sensitive configuration. Secrets are not committed to the repository and will be provided separately.
+The backend uses **.NET user secrets** for local sensitive configuration. Runtime secrets are not committed to the repository.
+
+For review/testing, the required local development secrets are provided separately through **SnapSend**, my own secure secret-sharing product:
+
+[Open SupportDesk secrets](https://snapsend-ai.netlify.app/s/2f70431a9c2bf862ba0cf4ee80eb02f1#key=XX11gN7OLEYoiHq855LUz26XGw8ivxu9Rd2vCJ_hW7I)
+
+Please note that this secret link can be opened a maximum of **5 times**
 
 Set the connection string:
 
@@ -35,13 +41,13 @@ cd SupportDesk.API
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<provided-connection-string>"
 ```
 
-Run the API:
+Run the API from the repository root:
 
 ```bash
 dotnet run --project SupportDesk.API
 ```
 
-The API applies migrations on startup and seeds the database with sample data.
+The API applies Entity Framework migrations on startup and seeds the database with sample data.
 
 ### Frontend
 
